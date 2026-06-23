@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }} · Login</title>
+  <link rel="stylesheet" href="/static/style.css?v=public-portal-1">
+</head>
+<body class="login-body">
+  <main class="login-card">
+    <p class="eyebrow">Private workspace</p>
+    <h1>{{ title }}</h1>
+    <p class="muted">Sign in to continue.</p>
+    {% if error %}<div class="banner error">{{ error }}</div>{% endif %}
+    <form method="post" action="/login" class="stack">
+      <label>Username<input name="username" required autocomplete="username"></label>
+      <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
+      <button type="submit">Sign in</button>
+    </form>
+  </main>
+</body>
+</html>
