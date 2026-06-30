@@ -8,6 +8,8 @@ A generic, brand-neutral internal operations portal for small teams. It provides
 - document library for shared files
 - simple cost tracking
 - publication/deliverable tracking
+- sanitized SOAR demo sections for cases, playbooks, approvals, and workflow summary cards
+- grouped navigation organized into Command, Response, and Delivery clusters
 - JSON and CSV exports
 
 This repository intentionally contains no organization-specific branding, private data, customer names, or live secrets.
@@ -23,6 +25,23 @@ uv run python app.py
 Open http://127.0.0.1:8008 and sign in with the bootstrap admin configured in `.env`.
 
 Default development credentials are intentionally generic and should be changed before any shared deployment.
+
+## Included demo sections
+
+The default dashboard includes three grouped navigation clusters:
+
+- `Command`: dashboard, requests, tasks
+- `Response`: SOAR, cases, playbooks, approvals
+- `Delivery`: documents, costs, deliverables
+
+The SOAR area is intentionally sanitized and static. It is meant to demonstrate IA and UI structure for:
+
+- SOAR summary metrics
+- sample cases with severity/status context
+- sample playbook catalog entries
+- sample approval queue items
+
+No customer data, live workflow execution, or organization-specific branding is included.
 
 ## Configuration
 
@@ -63,6 +82,13 @@ Run the app:
 
 ```bash
 uv run python app.py
+```
+
+Current focused verification for the public SOAR/navigation demo:
+
+```bash
+python3 -m py_compile app.py
+uv run pytest tests/test_app.py -q
 ```
 
 ## License
