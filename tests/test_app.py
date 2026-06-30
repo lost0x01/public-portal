@@ -44,10 +44,14 @@ def test_login_and_dashboard_renders_generic_branding_only():
         assert "brand" not in page.text.lower()
         assert 'class="tabs grouped-nav"' in page.text
         assert ">Command<" in page.text
+        assert ">Response<" in page.text
         assert ">Delivery<" in page.text
         assert 'href="#requests"' in page.text
+        assert 'href="#soar"' in page.text
+        assert 'href="#approvals"' in page.text
         assert 'href="#deliverables"' in page.text
-        assert page.text.index(">Command<") < page.text.index(">Delivery<")
+        assert "SOAR demo" in page.text
+        assert page.text.index(">Command<") < page.text.index(">Response<") < page.text.index(">Delivery<")
 
 
 def test_create_records_and_export_json():
@@ -85,3 +89,15 @@ def test_protected_routes_require_login():
         client = make_client(Path(d))
         assert client.get("/data.json").status_code == 401
         assert client.post("/tasks", data={"title":"x", "owner":"y"}).status_code == 401
+
+
+def test_public_portal_renders_sanitized_soar_demo_sections():
+    with tempfile.TemporaryDirectory() as d:
+        client = make_client(Path(d))
+        login(client)
+        page = client.get("/")
+        assert page.status_code == 200
+        assert "SOAR demo" in page.text
+        assert "Suspicious identity reset burst" in page.text
+        assert "Endpoint enrichment" in page.text
+        assert "Human-in-the-loop hold queue preview" in page.text

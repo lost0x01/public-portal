@@ -30,6 +30,15 @@ NAV_GROUPS = [
         ],
     },
     {
+        "label": "Response",
+        "items": [
+            {"label": "SOAR", "href": "#soar"},
+            {"label": "Cases", "href": "#cases"},
+            {"label": "Playbooks", "href": "#playbooks"},
+            {"label": "Approvals", "href": "#approvals"},
+        ],
+    },
+    {
         "label": "Delivery",
         "items": [
             {"label": "Documents", "href": "#documents"},
@@ -47,6 +56,55 @@ TEMPLATES_DIR = BASE_DIR / "templates"
 DEFAULT_ALLOWED_CIDRS = "127.0.0.1/32,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
 DEFAULT_SECRET = "public-portal-change-me"
 TRUST_X_FORWARDED_FOR = os.getenv("PORTAL_TRUST_X_FORWARDED_FOR", "false").strip().lower() in {"1", "true", "yes", "on"}
+
+SOAR_DEMO_CASES = [
+    {
+        "id": 1042,
+        "title": "Suspicious identity reset burst",
+        "severity": "high",
+        "status": "open",
+        "case_type": "identity",
+        "summary": "Multiple password reset attempts and VPN logins from a new geography were grouped into one case.",
+        "latest_event": "Artifact bundle attached and analyst triage is in progress.",
+    },
+    {
+        "id": 1038,
+        "title": "Endpoint beaconing review",
+        "severity": "medium",
+        "status": "monitoring",
+        "case_type": "endpoint",
+        "summary": "A workstation was isolated for outbound beacon-like traffic and needs follow-up validation.",
+        "latest_event": "Playbook queued for observable enrichment and host containment checks.",
+    },
+]
+SOAR_DEMO_PLAYBOOKS = [
+    {
+        "key": "identity-triage",
+        "title": "Identity triage",
+        "scope": "identity",
+        "trigger": "manual",
+        "description": "Collect reset activity, sign-in telemetry, and asset context before operator review.",
+        "steps": ["Collect evidence", "Enrich accounts", "Assess blast radius", "Escalate if confirmed"],
+    },
+    {
+        "key": "endpoint-enrichment",
+        "title": "Endpoint enrichment",
+        "scope": "endpoint",
+        "trigger": "manual",
+        "description": "Normalize host indicators, review detections, and stage a containment recommendation.",
+        "steps": ["Pull host facts", "Attach observables", "Check detections", "Prepare next action"],
+    },
+]
+SOAR_DEMO_APPROVALS = [
+    {
+        "id": 77,
+        "task_title": "Disable suspicious account session",
+        "case_title": "Suspicious identity reset burst",
+        "action": "account-disable",
+        "reason": "Human approval required before impacting a business-critical user.",
+        "status": "pending",
+    }
+]
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -219,6 +277,17 @@ def dashboard_data() -> dict[str, Any]:
         "requests": requests,
         "tasks": tasks,
         "deliverables": deliverables,
+        "soar_demo": {
+            "summary": {
+                "open_cases": len([case for case in SOAR_DEMO_CASES if case["status"] != "closed"]),
+                "active_runs": len(SOAR_DEMO_PLAYBOOKS),
+                "pending_approvals": len([item for item in SOAR_DEMO_APPROVALS if item["status"] == "pending"]),
+                "playbook_count": len(SOAR_DEMO_PLAYBOOKS),
+            },
+            "cases": SOAR_DEMO_CASES,
+            "playbooks": SOAR_DEMO_PLAYBOOKS,
+            "approvals": SOAR_DEMO_APPROVALS,
+        },
     }
 
 
