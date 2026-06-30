@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{{ title }}</title>
-  <link rel="stylesheet" href="/static/style.css?v=public-portal-1">
+  <link rel="stylesheet" href="/static/style.css?v=public-portal-nav-groups-1">
 </head>
 <body>
   <header class="topbar">
@@ -16,8 +16,17 @@
     <form method="post" action="/logout"><button class="secondary" type="submit">Sign out</button></form>
   </header>
 
-  <nav class="tabs">
-    <a href="#dashboard">Dashboard</a><a href="#requests">Requests</a><a href="#tasks">Tasks</a><a href="#documents">Documents</a><a href="#costs">Costs</a><a href="#deliverables">Deliverables</a>
+  <nav class="tabs grouped-nav" aria-label="Primary portal navigation">
+    {% for group in nav_groups %}
+    <section class="nav-group" aria-label="{{ group['label'] }} navigation group">
+      <div class="nav-group-label">{{ group['label'] }}</div>
+      <div class="nav-group-items">
+        {% for item in group['items'] %}
+        <a href="{{ item['href'] }}">{{ item['label'] }}</a>
+        {% endfor %}
+      </div>
+    </section>
+    {% endfor %}
   </nav>
 
   <main>

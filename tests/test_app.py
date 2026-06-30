@@ -42,6 +42,12 @@ def test_login_and_dashboard_renders_generic_branding_only():
         assert "Operations Portal" in page.text
         assert "<img" not in page.text.lower()
         assert "brand" not in page.text.lower()
+        assert 'class="tabs grouped-nav"' in page.text
+        assert ">Command<" in page.text
+        assert ">Delivery<" in page.text
+        assert 'href="#requests"' in page.text
+        assert 'href="#deliverables"' in page.text
+        assert page.text.index(">Command<") < page.text.index(">Delivery<")
 
 
 def test_create_records_and_export_json():

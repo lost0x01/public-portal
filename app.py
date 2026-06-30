@@ -20,6 +20,24 @@ from starlette.middleware.sessions import SessionMiddleware
 
 APP_TITLE = "Operations Portal"
 APP_SUBTITLE = "A generic internal workspace for requests, tasks, documents, costs, and deliverables."
+NAV_GROUPS = [
+    {
+        "label": "Command",
+        "items": [
+            {"label": "Dashboard", "href": "#dashboard"},
+            {"label": "Requests", "href": "#requests"},
+            {"label": "Tasks", "href": "#tasks"},
+        ],
+    },
+    {
+        "label": "Delivery",
+        "items": [
+            {"label": "Documents", "href": "#documents"},
+            {"label": "Costs", "href": "#costs"},
+            {"label": "Deliverables", "href": "#deliverables"},
+        ],
+    },
+]
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = Path(os.getenv("PORTAL_DATA_DIR", BASE_DIR / "data"))
 DOCUMENTS_DIR = Path(os.getenv("PORTAL_DOCUMENTS_DIR", DATA_DIR / "documents"))
@@ -250,7 +268,18 @@ def logout(request: Request):
 def index(request: Request):
     if not authenticated(request):
         return RedirectResponse("/login", status_code=303)
-    return templates.TemplateResponse(request, "index.html", {"title": APP_TITLE, "subtitle": APP_SUBTITLE, "user": request.session, **dashboard_data(), "documents": document_items()})
+    return templates.TemplateResponse(
+        request,
+        "index.html",
+        {
+            "title": APP_TITLE,
+            "subtitle": APP_SUBTITLE,
+            "user": request.session,
+            "nav_groups": NAV_GROUPS,
+            **dashboard_data(),
+            "documents": document_items(),
+        },
+    )
 
 
 @app.post("/requests")
